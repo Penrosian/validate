@@ -78,7 +78,6 @@ function checkDoctype() {
 // Helper function to add a warning to the footer if <!DOCTYPE html> is missing
 function addWarningFooter() {
     renderFooter(`<div id="doctype-warning"><p><strong>Warning: The document is missing a <!DOCTYPE html> declaration. Validation results may not be accurate.</strong></p></div>`);
-    createdFooter = false;
 }
 
 // Helper function to render validation results
@@ -139,7 +138,10 @@ function renderFooter(innerHTML) {
         footer = document.createElement('footer');
         document.body.appendChild(footer);
     }
-    if (createdFooter) footer.innerHTML = "";
+    if (createdFooter) {
+        footer.innerHTML = "";
+        createdFooter = false;
+    }
     footer.innerHTML += innerHTML;
 }
 
@@ -152,5 +154,12 @@ function renderErrorFooter() {
         `);
 }
 
-// Call the init function when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', init);
+// Call the init function when the DOM is fully loaded.
+// If that has already happened before this script ran, 
+// go ahead and fire init() now.
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+} else {
+    init();
+}
+
